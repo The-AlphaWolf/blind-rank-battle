@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BLIND RANK BATTLE — The Ultimate Character Ranking Game</title>
+  <meta name="description" content="Rank characters blindly, build your team, and watch them battle. A strategic character ranking game with 1700+ characters.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Background Canvas for Particles -->
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- Top Navigation Controls -->
+  <div class="top-nav-bar">
+    <div class="theme-switcher-pills" id="global-theme-switcher">
+      <button class="theme-pill active" data-theme="dark" title="Dark Cyberpunk">🌙 Dark</button>
+      <button class="theme-pill" data-theme="light" title="Clean Light">☀️ Light</button>
+      <button class="theme-pill" data-theme="colorful" title="Neon Pop">🌈 Colorful</button>
+    </div>
+    <button id="global-sound-toggle" class="sound-btn" title="Toggle Sound">
+      <span class="sound-on">🔊</span>
+      <span class="sound-off" style="display:none">🔇</span>
+    </button>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCREEN 1: LANDING + SETTINGS           -->
+  <!-- ═══════════════════════════════════════ -->
+  <section id="screen-settings" class="screen active">
+    <div class="screen-content">
+      <!-- Hero Title -->
+      <div class="hero-title">
+        <h1 class="glitch-text" data-text="BLIND RANK BATTLE">BLIND RANK BATTLE</h1>
+        <p class="hero-subtitle">Rank them blind. Pray you chose wisely.</p>
+        <p class="hero-tagline">Top half defends you. Bottom half destroys you.</p>
+      </div>
+
+      <!-- Settings Panel -->
+      <div class="settings-panel glass-panel">
+        <div class="settings-header">
+          <h2>⚙️ CUSTOMIZE YOUR BATTLE</h2>
+          <button id="btn-randomize-settings" class="btn-icon" title="Randomize All Settings">🎲</button>
+        </div>
+
+        <!-- Setting: Game Mode -->
+        <div class="setting-group">
+          <div class="setting-label">
+            <span class="setting-icon">🎮</span>
+            <span>GAME MODE</span>
+          </div>
+          <div class="option-cards" id="game-mode-options">
+            <label class="option-card active" data-value="classic">
+              <input type="radio" name="game-mode" value="classic" checked>
+              <span class="option-emoji">⚔️</span>
+              <span class="option-title">Classic</span>
+              <span class="option-desc">Blind rank: top defends, bottom attacks</span>
+            </label>
+            <label class="option-card" data-value="boss">
+              <input type="radio" name="game-mode" value="boss">
+              <span class="option-emoji">👑</span>
+              <span class="option-title">Boss Raid</span>
+              <span class="option-desc">1 Almighty Entity vs your defenders</span>
+            </label>
+            <label class="option-card" data-value="underdog">
+              <input type="radio" name="game-mode" value="underdog">
+              <span class="option-emoji">🐕</span>
+              <span class="option-title">Underdog</span>
+              <span class="option-desc">Mortals vs Cosmic Gods (3x Score)</span>
+            </label>
+            <label class="option-card" data-value="chaos">
+              <input type="radio" name="game-mode" value="chaos">
+              <span class="option-emoji">🌀</span>
+              <span class="option-title">Chaos Swap</span>
+              <span class="option-desc">Defections & side-swaps at reveal</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Setting: Ranking Format -->
+        <div class="setting-group">
+          <div class="setting-label">
+            <span class="setting-icon">🎴</span>
+            <span>RANKING FORMAT</span>
+          </div>
+          <div class="option-cards" id="ranking-format-options">
+            <label class="option-card active" data-value="blind">
+              <input type="radio" name="ranking-format" value="blind" checked>
+              <span class="option-emoji">🙈</span>
+              <span class="option-title">Blind Permalock</span>
+              <span class="option-desc">Characters drawn 1-by-1. Once placed, rank CANNOT be changed!</span>
+            </label>
+            <label class="option-card" data-value="normal">
+              <input type="radio" name="ranking-format" value="normal">
+              <span class="option-emoji">✏️</span>
+              <span class="option-title">Normal Mode</span>
+              <span class="option-desc">Drawn 1-by-1, but you can swap/edit ranks with dropdowns anytime.</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Setting: Battlefield Arena -->
+        <div class="setting-group">
+          <div class="setting-label">
+            <span class="setting-icon">🏟️</span>
+            <span>BATTLEFIELD ARENA</span>
+          </div>
+          <div class="option-cards" id="arena-options">
+            <label class="option-card active" data-value="random">
+              <input type="radio" name="arena" value="random" checked>
+              <span class="option-emoji">🎲</span>
+              <span class="option-title">Random Arena</span>
+              <span class="option-desc">Rotates every battle</span>
+            </label>
+            <label class="option-card" data-value="earth">
+              <input type="radio" name="arena" value="earth">
+              <span class="option-emoji">🏙️</span>
+              <span class="option-title">Metropolis</span>
+              <span class="option-desc">Neutral standard grounds</span>
+            </label>
+            <label class="option-card" data-value="space">
+              <input type="radio" name="arena" value="space">
+              <span class="option-emoji">🌌</span>
+              <span class="option-title">Cosmic Void</span>
+              <span class="option-desc">Suffocation risk for mortals</span>
+            </label>
+            <label class="option-card" data-value="asgard">
+              <input type="radio" name="arena" value="asgard">
+              <span class="option-emoji">⚡</span>
+              <span class="option-title">Asgardian Realm</span>
+              <span class="option-desc">+30% Magic & Mythology</span>
+            </label>
+            <label class="option-card" data-value="cyber">
+              <input type="radio" name="arena" value="cyber">
+              <span class="option-emoji">🦾</span>
+              <span class="option-title">Cyber Megacity</span>
+              <span class="option-desc">+30% Tech & Military</span>
+            </label>
+            <label class="option-card" data-value="colosseum">
+              <input type="radio" name="arena" value="colosseum">
+              <span class="option-emoji">🏛️</span>
+              <span class="option-title">Grand Arena</span>
+              <span class="option-desc">Hax disabled, pure brawl</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Setting: Fight Presentation -->
+        <div class="setting-group">
+          <div class="setting-label">
+            <span class="setting-icon">📖</span>
+            <span>FIGHT & STORY FORMAT</span>
+          </div>
+          <div class="option-cards" id="fight-style-options">
+            <label class="option-card active" data-value="duel">
+              <input type="radio" name="fight-style" value="duel" checked>
+              <span class="option-emoji">⚔️</span>
+              <span class="option-title">Team War & 1v1 Clashes</span>
+              <span class="option-desc">Whole team army health bars with animated 1v1 duels</span>
+            </label>
+            <label class="option-card" data-value="story">
+              <input type="radio" name="fight-style" value="story">
+              <span class="option-emoji">📜</span>
+              <span class="option-title">Epic Story Narration</span>
+              <span class="option-desc">Cinematic multi-chapter novel narrating the whole team war</span>
+            </label>
+            <label class="option-card" data-value="both">
+              <input type="radio" name="fight-style" value="both">
+              <span class="option-emoji">🎬</span>
+              <span class="option-title">Full Experience (Both)</span>
+              <span class="option-desc">Live team war clashing + complete story chronicles</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Setting: Categories -->
+        <div class="setting-group">
+          <div class="setting-label">
+            <span class="setting-icon">📂</span>
+            <span>CHARACTER CATEGORIES (1,585 TOTAL)</span>
+          </div>
+          <div class="category-preset-row">
+            <button class="btn-tiny" id="btn-select-all-cats">All (10)</button>
+            <button class="btn-tiny" id="btn-deselect-all-cats">Clear</button>
+            <button class="btn-tiny cat-preset-btn" data-preset="comics">Comics (MCU/DC/Marvel)</button>
+            <button class="btn-tiny cat-preset-btn" data-preset="real">Real & Military</button>
+            <button class="btn-tiny cat-preset-btn" data-preset="myth">Mythology & Sci-Fi</button>
+          </div>
+          <div class="category-grid" id="category-toggles">
+            <label class="category-toggle active" data-category="marvel">
+              <input type="checkbox" checked> <span class="cat-icon">🕷️</span> Marvel Comics (188)
+            </label>
+            <label class="category-toggle active" data-category="mcu">
+              <input type="checkbox" checked> <span class="cat-icon">🎬</span> MCU (159)
+            </label>
+            <label class="category-toggle active" data-category="dc">
+              <input type="checkbox" checked> <span class="cat-icon">🦇</span> DC Universe (161)
+            </label>
+            <label class="category-toggle active" data-category="movies">
+              <input type="checkbox" checked> <span class="cat-icon">🎥</span> Movies / TV (157)
+            </label>
+            <label class="category-toggle active" data-category="mythology">
+              <input type="checkbox" checked> <span class="cat-icon">⚡</span> Mythology (157)
+            </label>
+            <label class="category-toggle active" data-category="historical">
+              <input type="checkbox" checked> <span class="cat-icon">⚔️</span> Historical (153)
+            </label>
+            <label class="category-toggle active" data-category="modern">
+              <input type="checkbox" checked> <span class="cat-icon">🥊</span> Real Modern (151)
+            </label>
+            <label class="category-toggle active" data-category="scifi">
+              <input type="checkbox" checked> <span class="cat-icon">🚀</span> Sci-Fi (151)
+            </label>
+            <label class="category-toggle active" data-category="cosmic">
+              <input type="checkbox" checked> <span class="cat-icon">🌌</span> Cosmic Entities (155)
+            </label>
+            <label class="category-toggle active" data-category="military">
+              <input type="checkbox" checked> <span class="cat-icon">🎖️</span> Modern Military (153)
+            </label>
+          </div>
+        </div>
+
+        <!-- Setting: Character Count -->
+        <div class="setting-group">
+          <div class="setting-label">
+            <span class="setting-icon">👥</span>
+            <span>CHARACTERS PER ROUND</span>
+            <span class="setting-value" id="char-count-display">10</span>
+          </div>
+          <input type="range" id="char-count" min="6" max="20" value="10" step="2" class="slider-input">
+          <div class="slider-labels">
+            <span>6</span><span>8</span><span>10</span><span>12</span><span>14</span><span>16</span><span>18</span><span>20</span>
+          </div>
+        </div>
+
+        <!-- Setting: Tier Balance -->
+        <div class="setting-group">
+          <div class="setting-label">
+            <span class="setting-icon">⚖️</span>
+            <span>TIER BALANCE</span>
+          </div>
+          <div class="option-cards" id="tier-balance-options">
+            <label class="option-card active" data-value="chaotic">
+              <input type="radio" name="tier-balance" value="chaotic" checked>
+              <span class="option-emoji">🌪️</span>
+              <span class="option-title">Chaotic</span>
+              <span class="option-desc">All tiers mixed randomly</span>
+            </label>
+            <label class="option-card" data-value="balanced">
+              <input type="radio" name="tier-balance" value="balanced">
+              <span class="option-emoji">⚖️</span>
+              <span class="option-title">Balanced</span>
+              <span class="option-desc">Equal distribution of tiers</span>
+            </label>
+            <label class="option-card" data-value="highpower">
+              <input type="radio" name="tier-balance" value="highpower">
+              <span class="option-emoji">💥</span>
+              <span class="option-title">High Power</span>
+              <span class="option-desc">Only A tier and above</span>
+            </label>
+            <label class="option-card" data-value="street">
+              <input type="radio" name="tier-balance" value="street">
+              <span class="option-emoji">🏙️</span>
+              <span class="option-title">Street Level</span>
+              <span class="option-desc">Only C tier and below</span>
+            </label>
+            <label class="option-card" data-value="extremes">
+              <input type="radio" name="tier-balance" value="extremes">
+              <span class="option-emoji">🎰</span>
+              <span class="option-title">Extremes</span>
+              <span class="option-desc">Only S+ and E tiers</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Setting: Allowed Tiers Multi-Select -->
+        <div class="setting-group">
+          <div class="setting-label">
+            <span class="setting-icon">🛡️</span>
+            <span>ALLOWED POWER TIERS</span>
+            <button class="btn-tiny" id="btn-select-all-tiers">All</button>
+          </div>
+          <div class="tier-filter-grid" id="tier-filter-toggles">
+            <label class="tier-toggle active" data-tier="S+"><input type="checkbox" checked> <span class="tier-badge tier-splus">S+</span> Cosmic</label>
+            <label class="tier-toggle active" data-tier="S"><input type="checkbox" checked> <span class="tier-badge tier-s">S</span> Universal</label>
+            <label class="tier-toggle active" data-tier="A"><input type="checkbox" checked> <span class="tier-badge tier-a">A</span> Planet</label>
+            <label class="tier-toggle active" data-tier="B"><input type="checkbox" checked> <span class="tier-badge tier-b">B</span> City</label>
+            <label class="tier-toggle active" data-tier="C"><input type="checkbox" checked> <span class="tier-badge tier-c">C</span> Building</label>
+            <label class="tier-toggle active" data-tier="D"><input type="checkbox" checked> <span class="tier-badge tier-d">D</span> Street</label>
+            <label class="tier-toggle active" data-tier="E"><input type="checkbox" checked> <span class="tier-badge tier-e">E</span> Peak Human</label>
+          </div>
+        </div>
+
+        <!-- Setting: Team Split Ratio -->
+        <div class="setting-group">
+          <div class="setting-label">
+            <span class="setting-icon">✂️</span>
+            <span>TEAM SPLIT RATIO</span>
+          </div>
+          <div class="option-cards small" id="split-ratio-options">
+            <label class="option-card" data-value="30-70">
+              <input type="radio" name="split-ratio" value="30-70">
+              <span class="option-title">30/70</span>
+              <span class="option-desc">Heroic odds</span>
+            </label>
+            <label class="option-card" data-value="40-60">
+              <input type="radio" name="split-ratio" value="40-60">
+              <span class="option-title">40/60</span>
+              <span class="option-desc">Fewer defenders</span>
+            </label>
+            <label class="option-card active" data-value="50-50">
+              <input type="radio" name="split-ratio" value="50-50" checked>
+              <span class="option-title">50/50</span>
+              <span class="option-desc">Even split</span>
+            </label>
+            <label class="option-card" data-value="60-40">
+              <input type="radio" name="split-ratio" value="60-40">
+              <span class="option-title">60/40</span>
+              <span class="option-desc">More defenders</span>
+            </label>
+            <label class="option-card" data-value="70-30">
+              <input type="radio" name="split-ratio" value="70-30">
+              <span class="option-title">70/30</span>
+              <span class="option-desc">Heavy defense</span>
+            </label>
+            <label class="option-card" data-value="1-vs-all">
+              <input type="radio" name="split-ratio" value="1-vs-all">
+              <span class="option-title">1 vs All</span>
+              <span class="option-desc">Solo protector</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Setting: Battle Detail Level -->
+        <div class="setting-group">
+          <div class="setting-label">
+            <span class="setting-icon">📖</span>
+            <span>BATTLE DETAIL LEVEL</span>
+          </div>
+          <div class="option-cards" id="detail-level-options">
+            <label class="option-card" data-value="quick">
+              <input type="radio" name="detail-level" value="quick">
+              <span class="option-emoji">⚡</span>
+              <span class="option-title">Quick</span>
+              <span class="option-desc">Just the verdict</span>
+            </label>
+            <label class="option-card active" data-value="standard">
+              <input type="radio" name="detail-level" value="standard" checked>
+              <span class="option-emoji">📋</span>
+              <span class="option-title">Standard</span>
+              <span class="option-desc">Matchups + result</span>
+            </label>
+            <label class="option-card" data-value="epic">
+              <input type="radio" name="detail-level" value="epic">
+              <span class="option-emoji">📜</span>
+              <span class="option-title">Epic</span>
+              <span class="option-desc">Full narrative</span>
+            </label>
+            <label class="option-card" data-value="legendary">
+              <input type="radio" name="detail-level" value="legendary">
+              <span class="option-emoji">🏛️</span>
+              <span class="option-title">Legendary</span>
+              <span class="option-desc">Maximum detail + twists</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Setting: X-Factors -->
+        <div class="setting-group">
+          <div class="setting-label">
+            <span class="setting-icon">🎲</span>
+            <span>X-FACTORS</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="xfactor-toggle" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="sub-setting" id="xfactor-settings">
+            <span class="sub-label">Intensity:</span>
+            <div class="option-pills" id="xfactor-intensity">
+              <label class="pill"><input type="radio" name="xfactor-int" value="1"> Low (1-2)</label>
+              <label class="pill active"><input type="radio" name="xfactor-int" value="2" checked> Med (3-4)</label>
+              <label class="pill"><input type="radio" name="xfactor-int" value="3"> High (5+)</label>
+              <label class="pill"><input type="radio" name="xfactor-int" value="4"> Extreme</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Setting: Plot Twists -->
+        <div class="setting-group">
+          <div class="setting-label">
+            <span class="setting-icon">🔄</span>
+            <span>PLOT TWISTS</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="plottwist-toggle" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="sub-setting" id="plottwist-settings">
+            <span class="sub-label">Frequency:</span>
+            <div class="option-pills" id="plottwist-freq">
+              <label class="pill"><input type="radio" name="plottwist-freq" value="1"> Rare</label>
+              <label class="pill active"><input type="radio" name="plottwist-freq" value="2" checked> Common</label>
+              <label class="pill"><input type="radio" name="plottwist-freq" value="3"> Chaotic</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Setting: Timer -->
+        <div class="setting-group">
+          <div class="setting-label">
+            <span class="setting-icon">⏱️</span>
+            <span>RANKING TIMER</span>
+          </div>
+          <div class="option-pills" id="timer-options">
+            <label class="pill active"><input type="radio" name="timer" value="0" checked> Off</label>
+            <label class="pill"><input type="radio" name="timer" value="15"> 15s</label>
+            <label class="pill"><input type="radio" name="timer" value="30"> 30s</label>
+            <label class="pill"><input type="radio" name="timer" value="60"> 60s</label>
+            <label class="pill"><input type="radio" name="timer" value="120"> 120s</label>
+          </div>
+        </div>
+
+        <!-- Setting: Blind Mode -->
+        <div class="setting-group">
+          <div class="setting-label">
+            <span class="setting-icon">🙈</span>
+            <span>BLIND MODE (what to hide)</span>
+          </div>
+          <div class="blind-options">
+            <label class="check-option">
+              <input type="checkbox" id="hide-universe"> Hide Universe / Source
+            </label>
+            <label class="check-option">
+              <input type="checkbox" id="hide-category"> Hide Category
+            </label>
+            <label class="check-option">
+              <input type="checkbox" id="hide-image"> Hide Character Image
+            </label>
+          </div>
+        </div>
+
+        <!-- Setting: Sound & Visual -->
+        <div class="setting-group">
+          <div class="setting-label">
+            <span class="setting-icon">🎨</span>
+            <span>SOUND & VISUALS</span>
+          </div>
+          <div class="flex-row">
+            <div class="sub-setting">
+              <span class="sub-label">Sound Effects:</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="sound-toggle" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="sub-setting">
+              <span class="sub-label">Volume:</span>
+              <input type="range" id="volume-slider" min="0" max="100" value="50" class="slider-input small">
+            </div>
+            <div class="sub-setting">
+              <span class="sub-label">Animations:</span>
+              <div class="option-pills">
+                <label class="pill active"><input type="radio" name="anim" value="full" checked> Full</label>
+                <label class="pill"><input type="radio" name="anim" value="reduced"> Reduced</label>
+                <label class="pill"><input type="radio" name="anim" value="off"> Off</label>
+              </div>
+            </div>
+            <div class="sub-setting">
+              <span class="sub-label">Visual Theme:</span>
+              <div class="option-pills" id="settings-theme-pills">
+                <label class="pill active"><input type="radio" name="theme-pref" value="dark" checked> 🌙 Dark</label>
+                <label class="pill"><input type="radio" name="theme-pref" value="light"> ☀️ Light</label>
+                <label class="pill"><input type="radio" name="theme-pref" value="colorful"> 🌈 Colorful</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="start-actions-row">
+        <button id="btn-start-game" class="btn-primary btn-glow pulse-anim">
+          <span class="btn-icon-left">⚔️</span>
+          DRAW CHARACTERS
+          <span class="btn-icon-right">⚔️</span>
+        </button>
+        <button id="btn-open-roster" class="btn-secondary btn-roster">
+          <span class="btn-icon-left">📖</span>
+          ROSTER ENCYCLOPEDIA (1,585)
+        </button>
+      </div>
+
+      <!-- Stats Bar -->
+      <div class="stats-bar glass-panel">
+        <div class="stat-item"><span class="stat-num" id="stat-wins">0</span><span class="stat-lbl">Wins</span></div>
+        <div class="stat-item"><span class="stat-num" id="stat-losses">0</span><span class="stat-lbl">Losses</span></div>
+        <div class="stat-item"><span class="stat-num" id="stat-streak">0</span><span class="stat-lbl">Streak</span></div>
+        <div class="stat-item"><span class="stat-num" id="stat-played">0</span><span class="stat-lbl">Played</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCREEN 2: DRAFT & RANKING              -->
+  <!-- ═══════════════════════════════════════ -->
+  <section id="screen-draft" class="screen">
+    <div class="screen-content">
+      <div class="draft-header">
+        <div class="draft-mode-pill" id="draft-mode-pill">🙈 BLIND PERMALOCK</div>
+        <h2 class="section-title" id="draft-screen-title">🎴 RANK YOUR CHARACTERS</h2>
+        <p class="section-subtitle" id="draft-screen-subtitle">Characters drawn 1 by 1. Choose an empty rank slot carefully!</p>
+        <div class="draft-header-meta">
+          <div class="draft-counter-badge">
+            <span>DRAW:</span> <strong id="draft-counter">1 / 10</strong>
+          </div>
+          <div id="draft-timer" class="timer-display" style="display:none">
+            <span class="timer-icon">⏱️</span>
+            <span class="timer-value" id="timer-value">60</span>
+            <span class="timer-unit">s</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1-by-1 Drawn Character Card Stage -->
+      <div class="drawn-card-stage glass-panel" id="drawn-card-stage">
+        <div class="drawn-card-inner" id="drawn-card-inner">
+          <div class="drawn-card-badge" id="drawn-card-badge">DRAW #1 OF 10</div>
+          <div class="drawn-card-image-box" id="drawn-card-image"></div>
+          <div class="drawn-card-info">
+            <h3 class="drawn-card-name" id="drawn-card-name">Character Name</h3>
+            <div class="drawn-card-meta">
+              <span class="drawn-meta-pill" id="drawn-card-universe">Universe</span>
+              <span class="drawn-meta-pill" id="drawn-card-cat">Category</span>
+            </div>
+            <p class="drawn-card-instruction" id="drawn-card-prompt">
+              👇 <strong>Click an empty slot below</strong> to place this character into your ranking!
+            </p>
+          </div>
+        </div>
+        <div class="drawn-complete-box" id="drawn-complete-box" style="display:none">
+          <span class="drawn-complete-icon">🎉</span>
+          <h3>ALL CHARACTERS RANKED!</h3>
+          <p id="drawn-complete-sub">All ranking slots are filled. Ready to lock in and reveal the teams!</p>
+        </div>
+      </div>
+
+      <!-- Ranking Slots List (1 to N) -->
+      <div class="ranking-container">
+        <div class="ranking-hints">
+          <div class="hint-top">
+            <span class="hint-arrow">▲</span>
+            <span>RANK #1 — STRONGEST (Your Ultimate Defender)</span>
+          </div>
+        </div>
+        <div class="ranking-slots-list" id="ranking-slots-list">
+          <!-- Populated by JS -->
+        </div>
+        <div class="ranking-hints">
+          <div class="hint-bottom">
+            <span>RANK #N — WEAKEST (Your First Attacker)</span>
+            <span class="hint-arrow">▼</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="draft-actions">
+        <button id="btn-restart-draft" class="btn-secondary" title="Redraw characters">🔄 Redraw</button>
+        <button id="btn-lock-in" class="btn-primary btn-glow" disabled>🔒 LOCK IN FINAL RANKING</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCREEN 3: TEAM REVEAL                  -->
+  <!-- ═══════════════════════════════════════ -->
+  <section id="screen-reveal" class="screen">
+    <div class="screen-content">
+      <h2 class="section-title reveal-title" id="reveal-title">THE REVEAL</h2>
+
+      <div class="teams-container">
+        <!-- Defenders -->
+        <div class="team-column defenders">
+          <div class="team-header defender-header">
+            <span class="team-icon">🛡️</span>
+            <h3>YOUR DEFENDERS</h3>
+            <span class="team-power" id="defender-power">0</span>
+          </div>
+          <div class="team-cards" id="defender-cards">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- VS Divider -->
+        <div class="vs-divider">
+          <span class="vs-text">VS</span>
+          <div class="vs-line"></div>
+        </div>
+
+        <!-- Attackers -->
+        <div class="team-column attackers">
+          <div class="team-header attacker-header">
+            <span class="team-icon">⚔️</span>
+            <h3>YOUR ATTACKERS</h3>
+            <span class="team-power" id="attacker-power">0</span>
+          </div>
+          <div class="team-cards" id="attacker-cards">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Team Comparison Bar -->
+      <div class="comparison-bar glass-panel" id="comparison-bar">
+        <div class="comp-label">TEAM POWER</div>
+        <div class="comp-visual">
+          <div class="comp-fill defenders-fill" id="comp-defenders" style="width:50%">
+            <span class="comp-pct" id="comp-def-pct">50%</span>
+          </div>
+          <div class="comp-fill attackers-fill" id="comp-attackers" style="width:50%">
+            <span class="comp-pct" id="comp-atk-pct">50%</span>
+          </div>
+        </div>
+      </div>
+
+      <button id="btn-begin-battle" class="btn-primary btn-glow pulse-anim">⚔️ BEGIN BATTLE ⚔️</button>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCREEN 4: BATTLE SIMULATION            -->
+  <!-- ═══════════════════════════════════════ -->
+  <section id="screen-battle" class="screen">
+    <div class="screen-content">
+      <div class="battle-header">
+        <h2 class="section-title">⚔️ BATTLE IN PROGRESS</h2>
+        <div class="battle-progress">
+          <div class="bp-bar"><div class="bp-fill" id="battle-progress-fill" style="width:0%"></div></div>
+          <span class="bp-text" id="battle-progress-text">Phase 1</span>
+        </div>
+      </div>
+
+      <!-- Battlefield Arena Banner -->
+      <div class="arena-banner glass-panel" id="battle-arena-banner">
+        <span class="arena-icon" id="arena-banner-icon">🏟️</span>
+        <div class="arena-info">
+          <span class="arena-name" id="arena-banner-name">Metropolis Arena</span>
+          <span class="arena-modifier" id="arena-banner-mod">Standard neutral environment</span>
+        </div>
+      </div>
+
+      <!-- Whole Team War Momentum & Army HP -->
+      <div class="team-war-meter-container glass-panel">
+        <div class="team-war-side defender-side">
+          <div class="war-side-header">
+            <span class="war-icon">🛡️</span>
+            <span class="war-title">DEFENDERS ARMY</span>
+            <span class="war-hp-val" id="defender-army-hp">100%</span>
+          </div>
+          <div class="war-hp-track">
+            <div class="war-hp-fill defender-fill" id="defender-army-fill" style="width:100%"></div>
+          </div>
+        </div>
+        <div class="war-vs-badge">VS</div>
+        <div class="team-war-side attacker-side">
+          <div class="war-side-header">
+            <span class="war-icon">⚔️</span>
+            <span class="war-title">ATTACKERS ARMY</span>
+            <span class="war-hp-val" id="attacker-army-hp">100%</span>
+          </div>
+          <div class="war-hp-track">
+            <div class="war-hp-fill attacker-fill" id="attacker-army-fill" style="width:100%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Battle Score -->
+      <div class="battle-score glass-panel">
+        <div class="bs-team defenders-score">
+          <span class="bs-label">🛡️ DEFENDERS (PHASES WON)</span>
+          <span class="bs-value" id="def-score">0</span>
+        </div>
+        <div class="bs-vs">VS</div>
+        <div class="bs-team attackers-score">
+          <span class="bs-label">⚔️ ATTACKERS (PHASES WON)</span>
+          <span class="bs-value" id="atk-score">0</span>
+        </div>
+      </div>
+
+      <!-- Battle Presentation Tabs -->
+      <div class="battle-view-tabs" id="battle-view-tabs">
+        <button class="battle-tab-btn active" id="btn-tab-duel" data-view="duel">⚔️ Squad Warfare & Battle Arena</button>
+        <button class="battle-tab-btn" id="btn-tab-story" data-view="story">📜 Faction War Chronicle</button>
+      </div>
+
+      <!-- Live Clash Container -->
+      <div id="duel-view-container">
+        <!-- Whole Team Battle Arena Stage -->
+        <div class="team-battlefield-arena" id="team-battlefield-arena">
+          <!-- Defenders Squad Column -->
+          <div class="squad-column defenders-squad" id="squad-defenders">
+            <div class="squad-header">
+              <span class="squad-badge def-badge">🛡️ DEFENDERS SQUAD</span>
+              <span class="squad-count" id="def-standing-count">Standing: 0</span>
+            </div>
+            <div class="squad-roster-grid" id="def-squad-roster"></div>
+          </div>
+
+          <!-- Central Warfare Clash Hub -->
+          <div class="warfare-clash-hub" id="warfare-clash-hub">
+            <div class="clash-phase-badge" id="clash-phase-badge">WAR PHASE 1</div>
+            <div class="clash-headline" id="clash-headline">SQUADS FORMING BATTLE LINES</div>
+            
+            <!-- Live Action Combatants Spotlight -->
+            <div class="clash-action-stage" id="clash-action-stage">
+              <div class="combatant-pod def-pod" id="pod-def">
+                <div class="pod-avatars" id="pod-def-avatars"></div>
+                <div class="pod-name" id="pod-def-name">Defenders Vanguard</div>
+                <div class="pod-role" id="pod-def-role">Frontline Defense</div>
+              </div>
+
+              <div class="clash-action-core">
+                <div class="clash-action-icon" id="clash-action-icon">⚔️</div>
+                <div class="clash-damage-callout" id="clash-damage-callout" style="display:none"></div>
+              </div>
+
+              <div class="combatant-pod atk-pod" id="pod-atk">
+                <div class="pod-avatars" id="pod-atk-avatars"></div>
+                <div class="pod-name" id="pod-atk-name">Attackers Vanguard</div>
+                <div class="pod-role" id="pod-atk-role">Frontline Assault</div>
+              </div>
+            </div>
+
+            <!-- Active Combo / Synergy Banner -->
+            <div class="team-combo-card" id="team-combo-card" style="display:none">
+              <span class="combo-tag">✨ SQUAD SYNERGY</span>
+              <span class="combo-desc" id="team-combo-desc">Dual Strike</span>
+            </div>
+          </div>
+
+          <!-- Attackers Squad Column -->
+          <div class="squad-column attackers-squad" id="squad-attackers">
+            <div class="squad-header">
+              <span class="squad-badge atk-badge">⚔️ ATTACKERS SQUAD</span>
+              <span class="squad-count" id="atk-standing-count">Standing: 0</span>
+            </div>
+            <div class="squad-roster-grid" id="atk-squad-roster"></div>
+          </div>
+        </div>
+
+        <!-- Legacy matchup display kept hidden -->
+        <div class="matchup-display" id="matchup-display" style="display:none">
+          <div class="matchup-card defender-matchup" id="matchup-defender"></div>
+          <div class="matchup-vs">⚔️</div>
+          <div class="matchup-card attacker-matchup" id="matchup-attacker"></div>
+        </div>
+
+        <!-- X-Factor Banner -->
+        <div class="xfactor-banner" id="xfactor-banner" style="display:none">
+          <span class="xf-icon">🎲</span>
+          <span class="xf-text" id="xfactor-text"></span>
+        </div>
+
+        <!-- Battle Log -->
+        <div class="battle-log glass-panel" id="battle-log">
+          <!-- Populated by JS with typewriter effect -->
+        </div>
+      </div>
+
+      <!-- Story Narration Chronicle View -->
+      <div class="story-narration-view glass-panel" id="story-narration-view" style="display:none">
+        <div class="story-header">
+          <div class="story-title-wrap">
+            <span class="story-icon">📜</span>
+            <h3 id="story-chapter-title">PROLOGUE: BATTLE LINES DRAWN</h3>
+          </div>
+          <div class="story-nav-controls">
+            <button class="btn-tiny" id="btn-story-prev" title="Previous Chapter">◀ Prev</button>
+            <span class="story-chapter-count" id="story-chapter-count">Chapter 1 of 5</span>
+            <button class="btn-tiny" id="btn-story-next" title="Next Chapter">Next ▶</button>
+            <button class="btn-tiny btn-accent" id="btn-story-full" title="Read Entire Chronicle">Full Story</button>
+          </div>
+        </div>
+        <div class="story-body" id="story-body">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <button id="btn-skip-battle" class="btn-secondary">⏩ Skip to Results</button>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCREEN 5: RESULTS                      -->
+  <!-- ═══════════════════════════════════════ -->
+  <section id="screen-results" class="screen">
+    <div class="screen-content">
+      <!-- Win/Loss Banner -->
+      <div class="result-banner" id="result-banner">
+        <h2 class="result-text" id="result-text">VICTORY</h2>
+        <p class="result-subtitle" id="result-subtitle">Your defenders held the line!</p>
+      </div>
+
+      <!-- Win Probability -->
+      <div class="result-stat glass-panel">
+        <span class="rs-label">Win Probability</span>
+        <span class="rs-value" id="result-winprob">67.3%</span>
+      </div>
+
+      <!-- Final Score -->
+      <div class="final-score glass-panel">
+        <div class="fs-team">
+          <span class="fs-label">🛡️ Defenders</span>
+          <span class="fs-value" id="final-def-score">0</span>
+        </div>
+        <div class="fs-divider">—</div>
+        <div class="fs-team">
+          <span class="fs-label">⚔️ Attackers</span>
+          <span class="fs-value" id="final-atk-score">0</span>
+        </div>
+      </div>
+
+      <!-- MVP -->
+      <div class="mvp-card glass-panel" id="mvp-card">
+        <h3>🏆 MVP</h3>
+        <div class="mvp-content" id="mvp-content"></div>
+      </div>
+
+      <!-- Key Matchups Summary -->
+      <div class="matchups-summary glass-panel" id="matchups-summary">
+        <h3>⚔️ TEAM WAR PHASES & COMBAT REPORT</h3>
+        <div id="matchups-list"></div>
+      </div>
+
+      <!-- X-Factors Applied -->
+      <div class="xfactors-summary glass-panel" id="xfactors-summary">
+        <h3>🎲 X-FACTORS APPLIED</h3>
+        <div id="xfactors-list"></div>
+      </div>
+
+      <!-- What-If Analysis -->
+      <div class="whatif-panel glass-panel" id="whatif-panel">
+        <h3>🔮 WHAT IF?</h3>
+        <p class="whatif-text" id="whatif-text"></p>
+        <p class="whatif-optimal" id="whatif-optimal"></p>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="result-actions">
+        <button id="btn-play-again" class="btn-primary btn-glow">🔄 PLAY AGAIN</button>
+        <button id="btn-rematch" class="btn-secondary">🔁 REMATCH (Same Characters)</button>
+        <button id="btn-back-settings" class="btn-secondary">⚙️ Change Settings</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Loading Overlay -->
+  <div id="loading-overlay" style="display:none">
+    <div class="loader-content">
+      <div class="loader-spinner"></div>
+      <p class="loader-text">Drawing characters from the multiverse...</p>
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div id="confirm-modal" class="modal-overlay" style="display:none">
+    <div class="modal-box glass-panel">
+      <h3 id="modal-title">Confirm</h3>
+      <p id="modal-text">Are you sure?</p>
+      <div class="modal-actions">
+        <button id="modal-cancel" class="btn-secondary">Cancel</button>
+        <button id="modal-confirm" class="btn-primary">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Roster Encyclopedia Modal -->
+  <div id="roster-modal" class="modal-overlay" style="display:none">
+    <div class="modal-box glass-panel roster-modal-box">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-icon">📖</span>
+          <h3>ROSTER ENCYCLOPEDIA (1,585 CHARACTERS)</h3>
+        </div>
+        <button id="roster-close-btn" class="btn-icon" title="Close Encyclopedia">✖</button>
+      </div>
+      <div class="roster-toolbar">
+        <input type="text" id="roster-search-input" placeholder="🔍 Search name, ability, universe..." class="text-input">
+        <select id="roster-cat-filter" class="select-input">
+          <option value="all">All Categories (10)</option>
+          <option value="marvel">Marvel Comics (188)</option>
+          <option value="mcu">MCU (159)</option>
+          <option value="dc">DC Universe (161)</option>
+          <option value="movies">Movies / TV (157)</option>
+          <option value="mythology">Mythology (157)</option>
+          <option value="historical">Historical (153)</option>
+          <option value="modern">Real Modern (151)</option>
+          <option value="scifi">Sci-Fi (151)</option>
+          <option value="cosmic">Cosmic Entities (155)</option>
+          <option value="military">Modern Military (153)</option>
+        </select>
+        <select id="roster-tier-filter" class="select-input">
+          <option value="all">All Tiers (S+ to E)</option>
+          <option value="S+">S+ Tier (Cosmic)</option>
+          <option value="S">S Tier (Universal)</option>
+          <option value="A">A Tier (Planet)</option>
+          <option value="B">B Tier (City)</option>
+          <option value="C">C Tier (Building)</option>
+          <option value="D">D Tier (Street)</option>
+          <option value="E">E Tier (Peak Human)</option>
+        </select>
+      </div>
+      <div class="roster-stats-summary" id="roster-count-summary">Showing 1,585 characters</div>
+      <div class="roster-grid" id="roster-grid">
+        <!-- Rendered by JS -->
+      </div>
+      <!-- Custom Squad Builder Dock -->
+      <div class="custom-squad-dock" id="custom-squad-dock">
+        <div class="dock-header">
+          <div class="dock-title">
+            <span class="dock-icon">🎯</span>
+            <span>CUSTOM SQUAD: <strong id="custom-squad-count">0 / 10</strong></span>
+          </div>
+          <div class="dock-actions">
+            <button id="btn-squad-random-fill" class="btn-tiny" title="Fill remaining slots randomly">🎲 Fill Rest</button>
+            <button id="btn-squad-clear" class="btn-tiny btn-danger" title="Clear selection">Clear</button>
+            <button id="btn-squad-play" class="btn-primary btn-sm" disabled title="Start game with this team">
+              ⚔️ DRAFT THIS SQUAD (0/10)
+            </button>
+          </div>
+        </div>
+        <div class="dock-roster-tray" id="dock-roster-tray">
+          <span class="dock-empty-hint">Click characters to draft your dream custom team (or fill randomly)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="characters.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
